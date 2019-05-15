@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="text/javascript">
+    $(function () {
+        $('#item_table').datagrid({
+            url: '/showItem',
+            columns: [[
+                {field: 'Id', title: '商品ID', width: 100},
+                {field: 'Title', title: '商品标题', width: 100},
+                {field: 'CategoryName', title: '叶子类目', width: 100},
+                {field: 'SellPoint', title: '卖点', width: 100},
+                {field: 'Price', title: '价格', width: 100},
+                {field: 'Num', title: '库存数量', width: 100},
+                {field: 'Barcode', title: '条形码', width: 100},
+                {field: 'Status', title: '状态', width: 100},
+                {field: 'Created', title: '创建日期', width: 100},
+                {field: 'Updated', title: '更新日期', width: 100}
+            ]],
+            fitColumns: true,
+            striped: true,
+            rownumbers: true,
+            pagination:true,
+            toolbar: [{
+                iconCls: 'icon-add',
+                text: '新增',
+                handler: function () {
+                    alert('新增')
+                }
+            }, {
+                iconCls: 'icon-edit',
+                text: '编辑',
+                handler: function () {
+                    alert('编辑')
+                }
+            }, {
+                iconCls: 'icon-cancel',
+                text: '删除',
+                handler: function () {
+                    alert('删除')
+                }
+            }, '-', {
+                iconCls: 'icon-remove',
+                text: '上架',
+                handler: function () {
+                    alert('上架')
+                }
+            }, {
+                iconCls: 'icon-remove',
+                text: '下架',
+                handler: function () {
+                    alert('下架')
+                }
+            }]
+
+        });
+    })
+</script>
+<table id="item_table"></table>
+</body>
+</html>

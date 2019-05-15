@@ -1,6 +1,7 @@
 package user
 
 import (
+	"ego/src/common"
 	"encoding/json"
 	"net/http"
 )
@@ -12,7 +13,7 @@ import (
  */
 
 func UserHandler() {
-	http.HandleFunc("/login", loginController)
+	common.Router.HandleFunc("/login", loginController)
 }
 
 //登录
