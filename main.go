@@ -1,0 +1,4 @@
+package CmsTest
+
+func main() {
+}
