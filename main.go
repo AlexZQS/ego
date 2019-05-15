@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ego/src/user"
 	"html/template"
 	"net/http"
 )
@@ -8,14 +9,18 @@ import (
 func main() {
 
 	server := http.Server{
-		Addr: ":80"}
+		Addr: ":8088"}
 
-	http.HandleFunc("/", welcome)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	http.HandleFunc("/", welcome)
+
+	//调用所有user模块的handler
+	user.UserHandler()
+
 	server.ListenAndServe()
 }
 
-func welcome(writer http.ResponseWriter, request *http.Request) {
+func welcome(writer http.ResponseWriter, _ *http.Request) {
 	files, _ := template.ParseFiles("view/login.html")
-	files.Execute(writer, nil)
+	_ = files.Execute(writer, nil)
 }
