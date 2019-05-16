@@ -2,6 +2,7 @@ package main
 
 import (
 	"ego/src/common"
+	"ego/src/item"
 	"ego/src/user"
 	"github.com/gorilla/mux"
 	"html/template"
@@ -9,7 +10,6 @@ import (
 )
 
 func main() {
-
 	//server := http.Server{
 	//	Addr: ":8088"}
 	//
@@ -27,7 +27,10 @@ func main() {
 
 	//满足/page/{page}格式的处理
 	common.Router.HandleFunc("/page/{page}", showPage)
+	//用户
 	user.UserHandler()
+	//商品
+	item.ItemHandler()
 	_ = http.ListenAndServe(":80", common.Router)
 
 }
