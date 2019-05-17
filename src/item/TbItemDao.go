@@ -51,3 +51,26 @@ func selCount() (count int) {
 
 	return
 }
+
+/**
+  返回值如果小于0表示革新失败
+*/
+func updStatusByIdsDao(ids []string, status int) int {
+	if len(ids) <= 0 {
+		return -1
+	}
+
+	sql := "update tb_item set status = ? where"
+	for i, id := range ids {
+		sql += " id= " + id
+		if i < len(ids)-1 {
+			sql += " or "
+		}
+	}
+	count, err := common.Dml(sql, status)
+	if err != nil {
+		fmt.Println(err)
+		return -1
+	}
+	return int(count)
+}

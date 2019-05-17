@@ -26,8 +26,14 @@ type TbItem struct {
 	Num       int
 	Barcode   string
 	Image     string
-	Cid       int64
+	Cid       int
 	Status    int8
 	Create    string
 	Update    string
+}
+
+//给页面使用，实现商品类目
+type TbItemChild struct {
+	TbItem
+	CategoryName string
 }
