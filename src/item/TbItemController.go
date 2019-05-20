@@ -13,6 +13,16 @@ func ItemHandler() {
 	common.Router.HandleFunc("/item/instock", instockController)
 	common.Router.HandleFunc("/item/offstock", offstockController)
 	common.Router.HandleFunc("/item/imageupload", imageUploaderController)
+	common.Router.HandleFunc("/item/add", insertController)
+}
+
+//商品新增
+func insertController(w http.ResponseWriter, request *http.Request) {
+	request.ParseForm()
+	result := insertService(request.Form)
+	bytes, _ := json.Marshal(result)
+	w.Header().Set(common.HEADER_CONTENT_TYPE, common.JSON_HEADER)
+	w.Write(bytes)
 }
 
 //图片上传
