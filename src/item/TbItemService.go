@@ -144,3 +144,25 @@ func insertService(form url.Values) (e common.EgoResult) {
 	}
 	return
 }
+
+//修改页面显示信息
+func showItemDescCatService(id int) TbItemDescChild {
+	item := selByIdDao(id)
+	var c TbItemDescChild
+	c.Id = item.Id
+	c.Update = item.Update
+	c.Create = item.Create
+	c.Barcode = item.Barcode
+	c.Cid = item.Cid
+	c.Title = item.Title
+	c.SellPoint = item.SellPoint
+	c.Price = item.Price
+	c.Image = item.Image
+	c.Status = item.Status
+	c.Num = item.Num
+	//商品类目
+	c.CategoryName = cat.ShowCatByIdService(c.Cid).Name
+	//商品描述
+	c.Desc = desc.SelByIdService(c.Id).ItemDesc
+	return c
+}

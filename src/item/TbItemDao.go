@@ -97,3 +97,22 @@ func delById(id int) int {
 	}
 	return int(count)
 }
+
+//根据主键查询内容
+func selByIdDao(id int) (t *TbItem) {
+	rows, err := common.Dql("select * from tb_item where id=?", id)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+
+	if rows.Next() {
+		t := new(TbItem)
+		var s sql.NullString
+		_ = rows.Scan(&t.Id, &t.Title, &t.SellPoint, &t.Price, &t.Num,
+			&s, &t.Image, &t.Cid, &t.Status, &t.Create, &t.Update)
+		t.Barcode = s.String
+		return t
+	}
+	return nil
+}

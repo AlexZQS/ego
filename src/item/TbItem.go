@@ -37,3 +37,10 @@ type TbItemChild struct {
 	TbItem
 	CategoryName string
 }
+
+//给修改商品页面使用
+type TbItemDescChild struct {
+	TbItem
+	CategoryName string
+	Desc         string
+}

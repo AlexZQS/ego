@@ -1,6 +1,9 @@
 package desc
 
-import "ego/src/common"
+import (
+	"ego/src/common"
+	"fmt"
+)
 
 /**
  * @description
@@ -16,4 +19,19 @@ func insertDescDao(t TbItemDesc) int {
 	}
 
 	return int(count)
+}
+
+//根据主键查询描述
+func selByIdDao(id int) (t *TbItemDesc) {
+	rows, err := common.Dql("select * from tb_item_desc where item_id=?", id)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	var desc = new(TbItemDesc)
+	if rows.Next() {
+		_ = rows.Scan(desc.ItemId, desc.ItemDesc, desc.Created, desc.Update)
+		return desc
+	}
+	return nil
 }
