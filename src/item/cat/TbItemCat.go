@@ -7,7 +7,13 @@ type TbItemCat struct {
 	Name      string
 	Status    byte
 	SortOrder int8
-	IsParent  byte
+	IsParent  bool
 	Created   string
 	Update    string
+}
+
+type EasyUITree struct {
+	Id    int    `json:"id"`
+	Text  string `json:"text"`
+	State string `json:"state"`
 }

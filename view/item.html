@@ -38,7 +38,16 @@
                 iconCls: 'icon-add',
                 text: '新增',
                 handler: function () {
-                    alert('新增')
+                    var node="新增商品"
+                    if($("#index_tabes").tabs("getTab",node)){
+                        $("#index_tabes").tabs("select",node)
+                    }else{
+                        $('#index_tabes').tabs('add',{
+                            title: node,
+                            selected: true,
+                            href:'/page/item_add'
+                        });
+                    }
                 }
             }, {
                 iconCls: 'icon-edit',
@@ -85,13 +94,71 @@
                 iconCls: 'icon-remove',
                 text: '上架',
                 handler: function () {
-                    alert('上架')
+                    var ss=$("#item_table").datagrid("getSelections");
+                    if(ss.length<=0){
+                        $.messager.alert("系统消息","请选择要上架的数据","warning")
+                    }else{
+                        var ids="";
+                        for (var i=0;i<ss.length;i++){
+                            ids+=ss[i].Id;
+                            if (i <ss.length-1){
+                                ids+=",";
+                            }
+                        }
+                        $.post("/item/instock",{"ids":ids},function (data) {
+                            if (data.Status==200){
+                                $.messager.show({
+                                    title:'系统消息',
+                                    msg:'上架'+ids+'成功',
+                                    showType:'show',
+                                    showType:'slide'
+                                });
+                                $("#item_table").datagrid("reload")
+                            }else{
+                                $.messager.show({
+                                    title:'系统消息',
+                                    msg:'上架失败,请检查商品是否已经处于正常状态',
+                                    showType:'show',
+                                    showType:'slide'
+                                });
+                            }
+                        })
+                    }
                 }
             }, {
                 iconCls: 'icon-remove',
                 text: '下架',
                 handler: function () {
-                    alert('下架')
+                    var ss=$("#item_table").datagrid("getSelections");
+                    if(ss.length<=0){
+                        $.messager.alert("系统消息","请选择要下架的数据","warning")
+                    }else{
+                        var ids="";
+                        for (var i=0;i<ss.length;i++){
+                            ids+=ss[i].Id;
+                            if (i <ss.length-1){
+                                ids+=",";
+                            }
+                        }
+                        $.post("/item/offstock",{"ids":ids},function (data) {
+                            if (data.Status==200){
+                                $.messager.show({
+                                    title:'系统消息',
+                                    msg:'下架'+ids+'成功',
+                                    showType:'show',
+                                    showType:'slide'
+                                });
+                                $("#item_table").datagrid("reload")
+                            }else{
+                                $.messager.show({
+                                    title:'系统消息',
+                                    msg:'下架失败,请检查商品是否已经处于下架状态',
+                                    showType:'show',
+                                    showType:'slide'
+                                });
+                            }
+                        })
+                    }
                 }
             }]
 

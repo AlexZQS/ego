@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<script type="text/javascript">
+    $('#category_tree_tree').tree({
+        url:'/item/cat/show',
+        onClick: function(node){
+           if(node.state=="open"){
+                $("#item_add_selectcate_span").html(node.text);
+                $("#item_add_selectcate_hidden").val(node.id);
+               $('#item_add_dialog').dialog("destroy")
+           }
+        }
+    });
+</script>
+<ul id="category_tree_tree"></ul>
+</body>
+</html>

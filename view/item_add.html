@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="text/javascript">
+    K.create('#item_add_desc', {
+        themeType: 'default'
+    });
+    $("#item_add_selectcate").click(function () {
+        $('#item_add_dialog').dialog({
+            title: '选择类目',
+            width: 600,
+            height: 400,
+            closed: false,
+            cache: false,
+            href: '/page/item_cat_tree',
+            modal: true
+        });
+    });
+    var itemAddEdit = K.editor({
+        allowFileManager : true,
+        uploadJson:"/item/imageupload"
+    });
+    K('#item_add_imageupload').click(function() {
+        itemAddEdit.loadPlugin('multiimage', function() {
+            itemAddEdit.plugin.multiImageDialog({
+                clickFn : function(urlList) {
+                    $("#item_add_upload_span").html("");
+                    var urls="";
+                    $.each(urlList,function (i,n) {
+                        $("#item_add_upload_span").append('<img src="'+n.url+'" width="50" height="50"/>&nbsp;')
+                        urls+=n.url;
+                        if (i<urlList.length-1){
+                            urls+=",";
+                        }
+                    })
+
+                    $("#item_add_image_hidden").val(urls);
+                    itemAddEdit.hideDialog();
+                }
+            });
+        });
+    });
+</script>
+<form id="item_add_form" method="post">
+    <table cellpadding="8px"  align="center" style="margin: 10px;">
+        <tr>
+            <td width="60px">商品类目:</td>
+            <td><a id="item_add_selectcate" href="#" class="easyui-linkbutton">选择类目</a>&nbsp;<span id="item_add_selectcate_span"></span><input id="item_add_selectcate_hidden" type="hidden" /></td>
+        </tr>
+        <tr>
+            <td>商品标题:</td>
+            <td><input class="easyui-validatebox" data-options="required:true,missingMessage:'必填'" style="width:300px;"/></td>
+        </tr>
+        <tr>
+            <td>商品卖点:</td>
+            <td><textarea name="" cols="40" rows="5"></textarea></td>
+        </tr>
+        <tr>
+            <td>商品价格:</td>
+            <td><input class="easyui-validatebox" data-options="required:true,missingMessage:'必填'" style="width:250px;"/></td>
+        </tr>
+        <tr>
+            <td>库存数量:</td>
+            <td><input class="easyui-validatebox" data-options="required:true,missingMessage:'必填'" style="width:250px;"/></td>
+        </tr>
+        <tr>
+            <td>商品图片:</td>
+            <td><a id="item_add_imageupload" href="#" class="easyui-linkbutton">上传图片</a><span id="item_add_upload_span"></span>
+                <input type="hidden" id="item_add_image_hidden"/>
+            </td>
+        </tr>
+        <tr>
+            <td>商品描述:</td>
+            <td><textarea id="item_add_desc"
+                          style="width:700px;height:200px;visibility:hidden;"></textarea></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><a id="btn" href="#" class="easyui-linkbutton">新增</a></td>
+        </tr>
+    </table>
+</form>
+<div id="item_add_dialog"></div>
+</body>
+</html>

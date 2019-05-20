@@ -3,7 +3,13 @@ package item
 import (
 	"ego/src/common"
 	"ego/src/item/cat"
+	"fmt"
+	"io/ioutil"
+	"math/rand"
+	"mime/multipart"
+	"strconv"
 	"strings"
+	"time"
 )
 
 func showItemService(page, rows int) (e *common.DataGrid) {
@@ -25,7 +31,9 @@ func showItemService(page, rows int) (e *common.DataGrid) {
 			itemChild.SellPoint = items[i].SellPoint
 			itemChild.Title = items[i].Title
 
+			fmt.Printf(" id = %d", items[i].Cid)
 			itemChild.CategoryName = cat.ShowCatByIdService(items[i].Cid).Name
+			fmt.Printf(" CategoryName = %s\n", itemChild.CategoryName)
 			itemChildren = append(itemChildren, itemChild)
 
 		}
@@ -45,4 +53,48 @@ func delByIdsService(ids string) (e common.EgoResult) {
 
 	}
 	return
+}
+
+//商品上架
+func instockService(ids string) (e common.EgoResult) {
+	count := updStatusByIdsDao(strings.Split(ids, ","), 1)
+	if count > 0 {
+		e.Status = 200
+	}
+	return
+}
+
+//商品下架
+func offstockService(ids string) (e common.EgoResult) {
+	count := updStatusByIdsDao(strings.Split(ids, ","), 2)
+	if count > 0 {
+		e.Status = 200
+	}
+	return
+}
+
+//图片上传
+func imageUploadService(f multipart.File, h *multipart.FileHeader) map[string]interface{} {
+	m := make(map[string]interface{})
+	bytes, err := ioutil.ReadAll(f)
+	if err != nil {
+		m["error"] = 1
+		m["message"] = "上传失败,服务器错误"
+		return m
+	}
+
+	//纳秒时间戳 + 随机数 + 扩展名
+	rand.Seed(time.Now().UnixNano()) //种子
+	fileName := "static/images/" + strconv.Itoa(int(time.Now().UnixNano())) +
+		strconv.Itoa(rand.Intn(1000)) +
+		h.Filename[strings.LastIndex(h.Filename, "."):]
+	err = ioutil.WriteFile(fileName, bytes, 0777)
+	if err != nil {
+		m["error"] = 1
+		m["message"] = "上传失败,保存图片时错误"
+		return m
+	}
+	m["error"] = 0
+	m["url"] = common.CurrPath + fileName
+	return m
 }
