@@ -19,7 +19,7 @@ package item
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商品表';*/
 
 type TbItem struct {
-	Id        int64
+	Id        int
 	Title     string
 	SellPoint string
 	Price     int

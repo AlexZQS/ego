@@ -87,3 +87,13 @@ func insertItemDao(t TbItem) int {
 
 	return int(count)
 }
+
+//根据Id 删除
+func delById(id int) int {
+	count, err := common.Dml("delete from tb_item where id=?", id)
+	if err != nil {
+		fmt.Println(err)
+		return -1
+	}
+	return int(count)
+}

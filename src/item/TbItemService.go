@@ -3,6 +3,7 @@ package item
 import (
 	"ego/src/common"
 	"ego/src/item/cat"
+	"ego/src/item/desc"
 	"fmt"
 	"io/ioutil"
 	"math/rand"
@@ -117,18 +118,29 @@ func insertService(form url.Values) (e common.EgoResult) {
 	t.Image = form["Image"][0]
 
 	t.Status = 1
-	timeFormat := time.Now().Format("2006-01-02 14:01:02")
-	createDate := timeFormat
-	t.Create = createDate
+	timeFormat := time.Now().Format("2006-01-02 15:04:05")
+	t.Create = timeFormat
 
-	t.Update = createDate
+	t.Update = timeFormat
 
 	id := common.GenId()
-	t.Id = int64(id)
+	t.Id = id
 
+	//商品表新增
 	count := insertItemDao(t)
 	if count > 0 {
-		e.Status = 200
+		var tbItemDesc desc.TbItemDesc
+		tbItemDesc.ItemId = id
+		tbItemDesc.Created = timeFormat
+		tbItemDesc.Update = timeFormat
+		tbItemDesc.ItemDesc = form["Desc"][0]
+		countDesc := desc.Insert(tbItemDesc)
+		if countDesc > 0 {
+			e.Status = 200
+		} else {
+			//删除商品中数据
+			delById(id)
+		}
 	}
 	return
 }
