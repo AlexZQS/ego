@@ -11,8 +11,19 @@ func ParamHandler() {
 	common.Router.HandleFunc("/item/param/show", showParamController)
 	common.Router.HandleFunc("/item/param/delete", delByIdsController)
 	common.Router.HandleFunc("/item/param/iscat", isCatController)
+	common.Router.HandleFunc("/item/param/add", insertCatController)
 }
 
+//添加规格参数
+func insertCatController(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	e := insertParamService(r.Form)
+	bytes, _ := json.Marshal(e)
+	w.Header().Set(common.HEADER_CONTENT_TYPE, common.JSON_HEADER)
+	w.Write(bytes)
+}
+
+//规格参数是否存在
 func isCatController(w http.ResponseWriter, r *http.Request) {
 	catId, _ := strconv.Atoi(r.FormValue("catid"))
 	e := selByCatIdService(catId)

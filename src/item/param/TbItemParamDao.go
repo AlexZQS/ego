@@ -71,3 +71,14 @@ func selByCatIdDao(catid int) *TbItemParam {
 
 	return nil
 }
+
+//新增
+func insertParamDao(param TbItemParam) int {
+	count, err := common.Dml("insert into tb_item_param values(default,?,?,?,?)",
+		param.ItemCatId, param.ParamData, param.Created, param.Updated)
+	if err != nil {
+		fmt.Println(err)
+		return -1
+	}
+	return int(count)
+}

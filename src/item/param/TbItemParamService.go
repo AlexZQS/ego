@@ -3,8 +3,10 @@ package param
 import (
 	"ego/src/common"
 	c "ego/src/item/cat"
+	"net/url"
 	"strconv"
 	"strings"
+	"time"
 )
 
 //显示规格参数
@@ -47,6 +49,24 @@ func delByIdsService(ids string) (e common.EgoResult) {
 func selByCatIdService(catId int) (e common.EgoResult) {
 	param := selByCatIdDao(catId)
 	if param == nil {
+		e.Status = 200
+	}
+	return
+}
+
+//新增规格参数
+func insertParamService(values url.Values) (e common.EgoResult) {
+	catId, _ := strconv.Atoi(values["itemCatId"][0])
+	paramData := values["paramData"][0]
+	var paramItem TbItemParam
+	paramItem.ItemCatId = catId
+	paramItem.ParamData = paramData
+	timeFormat := time.Now().Format("2006-01-02 15:04:05")
+	paramItem.Created = timeFormat
+	paramItem.Updated = timeFormat
+
+	count := insertParamDao(paramItem)
+	if count > 0 {
 		e.Status = 200
 	}
 	return
