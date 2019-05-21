@@ -3,6 +3,8 @@ package param
 import (
 	"ego/src/common"
 	c "ego/src/item/cat"
+	"strconv"
+	"strings"
 )
 
 //显示规格参数
@@ -22,5 +24,30 @@ func showParamService(page, rows int) (d common.DataGrid) {
 
 	}
 	d.Row = cats
+	return
+}
+
+//删除规格参数
+func delByIdsService(ids string) (e common.EgoResult) {
+	split := strings.Split(ids, ",")
+	idInt := make([]int, 0)
+	for _, e := range split {
+		id, _ := strconv.Atoi(e)
+		idInt = append(idInt, id)
+	}
+	count := delByIdDao(idInt)
+	if count > 0 {
+		e.Status = 200
+	}
+
+	return
+}
+
+//根据类目id查询规格参数是否已经添加
+func selByCatIdService(catId int) (e common.EgoResult) {
+	param := selByCatIdDao(catId)
+	if param == nil {
+		e.Status = 200
+	}
 	return
 }

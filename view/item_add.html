@@ -26,9 +26,26 @@
                     url:'/item/cat/show',
                     onClick: function(node){
                         if(node.state=="open"){
-                            $("#item_add_selectcate_span").html(node.text);
-                            $("#item_add_selectcate_hidden").val(node.id);
-                            $('#item_add_dialog').dialog("destroy")
+                            $("#item_add_hiddenparam").hide();
+                            $.post("/item/param/iscat", {"catid": node.id}, function (data) {
+                                if (data.Status == 400) {
+                                    $("#item_add_hiddenparam").show();
+                                   var json= eval("("+data.Data+")");
+                                   var paramString = "";
+                                   for(var i = 0 ;i<json.length;i++){
+                                       paramString+="<div class='item_add_groupname'>"+json[i].group+"</div>";
+                                       paramString+="<ul>";
+                                       for(var j=0;j<json[i].params.length;j++){
+                                           paramString+="<li>"+json[i].params[j]+":<input type='text' sign='"+json[i].params[j]+"'/></li>";
+                                       }
+                                       paramString+="</ul>";
+                                   }
+                                   $("#item_add_param_td").html(paramString);
+                                }
+                                $("#item_add_selectcate_span").html(node.text);
+                                $("#item_add_selectcate_hidden").val(node.id);
+                                $('#item_add_dialog').dialog("close");
+                            })
                         }
                     }
                 });
@@ -70,6 +87,23 @@
                     return false;
                 }
                 textEditor.sync();
+                var paramDataString ="["
+                $.each($(".item_add_groupname"),function (i,n) {
+                    paramDataString+="{";
+                    paramDataString+='"group":"'+$(n).html()+'",params:[';
+                    $.each($(n).next("ul").children(),function (i2,n2) {
+                        paramDataString+='{"k":"'+$(n2).children("input").attr("sign")+'","v":"'+$(n2).children("input").val()+'"}';
+                        if(i2<$(n).next("ul").children().length-1){
+                            paramDataString+=",";
+                        }
+                    });
+                    paramDataString+="]}";
+                    if(i<$(".item_add_groupname").length-1){
+                        paramDataString+=",";
+                    }
+                });
+                paramDataString +="]";
+                $("#item_add_input_hidden_paramData").val(paramDataString);
             },
             success: function (data) {
                 //easyui form,返回数据需要解析
@@ -86,6 +120,7 @@
                     $("#item_add_selectcate_hidden").val("");
                     textEditor.html("");
                     textEditor.sync();
+                    $("#item_add_param_td").hide();
                 } else {
                     $.messager.show({
                         title: '系统消息',
@@ -104,6 +139,7 @@
     });
 </script>
 <form id="item_add_form" method="post">
+    <input type="hidden" name="paramData" id="item_add_input_hidden_paramData"/>
     <table cellpadding="8px" align="center" style="margin: 10px;">
         <tr>
             <td width="60px">商品类目:</td>
@@ -146,6 +182,14 @@
             <td>商品描述:</td>
             <td><textarea id="item_add_desc"
                           style="width:700px;height:200px;visibility:hidden;" name="Desc"></textarea></td>
+        </tr>
+        <tr style="display: none;" id="item_add_hiddenparam">
+            <td>
+                规格参数:
+            </td>
+            <td id="item_add_param_td">
+
+            </td>
         </tr>
         <tr>
             <td></td>

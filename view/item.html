@@ -103,6 +103,24 @@
                                     $("#item_update_status").html(itemUpdateStatusV);
                                     item_update_editor.html(json.Desc);
                                 });
+                                //显示商品规格参数
+                                $("#item_update_hiddenparam").hide();
+                                $.post("/item/paramitem/selid",{"id": ss[0].Id}, function (data) {
+                                    if(data.Status==200){
+                                        $("#item_update_hiddenparam").show();
+                                        var json= eval("("+data.Data+")");
+                                        var paramString = "";
+                                        for(var i = 0 ;i<json.length;i++){
+                                            paramString+="<div class='item_update_groupname'>"+json[i].group+"</div>";
+                                            paramString+="<ul>";
+                                            for(var j=0;j<json[i].params.length;j++){
+                                                paramString+="<li>"+json[i].params[j].k+":<input type='text' sign='"+json[i].params[j].k+"' value='"+json[i].params[j].v+"'/></li>";
+                                            }
+                                            paramString+="</ul>";
+                                        }
+                                        $("#item_update_param_td").html(paramString);
+                                    }
+                                });
                             }
                         });
                     }
