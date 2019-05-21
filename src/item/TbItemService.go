@@ -22,8 +22,8 @@ func showItemService(page, rows int) (e *common.DataGrid) {
 			var itemChild TbItemChild
 			itemChild.Id = items[i].Id
 			itemChild.Barcode = items[i].Barcode
-			itemChild.Update = items[i].Update
-			itemChild.Create = items[i].Create
+			itemChild.Updated = items[i].Updated
+			itemChild.Created = items[i].Created
 			itemChild.Status = items[i].Status
 			//itemChild.Cid = items[i].Cid
 			//itemChild.Image = items[i].Image
@@ -87,9 +87,11 @@ func imageUploadService(f multipart.File, h *multipart.FileHeader) map[string]in
 
 	//纳秒时间戳 + 随机数 + 扩展名
 	rand.Seed(time.Now().UnixNano()) //种子
-	fileName := "static/images/" + strconv.Itoa(int(time.Now().UnixNano())) +
+	fileName := "static/images/" +
+		strconv.FormatInt(time.Now().UnixNano(), 12) +
 		strconv.Itoa(rand.Intn(1000)) +
 		h.Filename[strings.LastIndex(h.Filename, "."):]
+	fmt.Printf("FileName %s", fileName)
 	err = ioutil.WriteFile(fileName, bytes, 0777)
 	if err != nil {
 		m["error"] = 1
@@ -119,9 +121,9 @@ func insertService(form url.Values) (e common.EgoResult) {
 
 	t.Status = 1
 	timeFormat := time.Now().Format("2006-01-02 15:04:05")
-	t.Create = timeFormat
+	t.Created = timeFormat
 
-	t.Update = timeFormat
+	t.Updated = timeFormat
 
 	id := common.GenId()
 	t.Id = id
@@ -150,8 +152,8 @@ func showItemDescCatService(id int) TbItemDescChild {
 	item := selByIdDao(id)
 	var c TbItemDescChild
 	c.Id = item.Id
-	c.Update = item.Update
-	c.Create = item.Create
+	c.Updated = item.Updated
+	c.Created = item.Created
 	c.Barcode = item.Barcode
 	c.Cid = item.Cid
 	c.Title = item.Title
@@ -165,4 +167,49 @@ func showItemDescCatService(id int) TbItemDescChild {
 	//商品描述
 	c.Desc = desc.SelByIdService(c.Id).ItemDesc
 	return c
+}
+
+//更新
+func update(values url.Values) (e common.EgoResult) {
+	common.OpenConnWithTx()
+	var t TbItem
+	id, _ := strconv.Atoi(values["Id"][0])
+	t.Id = int64(id)
+
+	cid, _ := strconv.Atoi(values["Cid"][0])
+	t.Cid = cid
+
+	t.Title = values["Title"][0]
+
+	price, _ := strconv.Atoi(values["Price"][0])
+	t.Price = price
+
+	num, _ := strconv.Atoi(values["Num"][0])
+	t.Num = num
+
+	t.Image = values["Image"][0]
+
+	status, _ := strconv.Atoi(values["Status"][0])
+	t.Status = int8(status)
+
+	t.SellPoint = values["SellPoint"][0]
+
+	date := time.Now().Format("2006-01-02 15:04:05")
+	t.Updated = date
+
+	count := updateItemByIdWithTx(t)
+	if count > 0 {
+		var itemDesc desc.TbItemDesc
+		itemDesc.ItemId = int64(id)
+		itemDesc.ItemDesc = values["Desc"][0]
+		itemDesc.Update = date
+		count = desc.UpdateDescByIdWithTxDao(itemDesc)
+		if count > 0 || "" == itemDesc.ItemDesc {
+			common.CloseConnWithTx(true)
+			e.Status = 200
+		}
+	}
+	common.CloseConnWithTx(false)
+	return
+
 }

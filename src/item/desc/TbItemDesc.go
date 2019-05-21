@@ -7,7 +7,7 @@ package desc
  */
 
 type TbItemDesc struct {
-	ItemId   int
+	ItemId   int64
 	ItemDesc string
 	Created  string
 	Update   string

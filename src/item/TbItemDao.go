@@ -26,7 +26,7 @@ func selByPageDao(rows, page int) []TbItem {
 
 		//如果直接使用item.barcode由于数据库中列为NULL，导致填充错误
 		_ = dql.Scan(&item.Id, &item.Title, &item.SellPoint, &item.Price, &item.Num,
-			&s, &item.Image, &item.Cid, &item.Status, &item.Create, &item.Update)
+			&s, &item.Image, &item.Cid, &item.Status, &item.Created, &item.Updated)
 		item.Barcode = s.String
 		items = append(items, item)
 	}
@@ -79,9 +79,10 @@ func updStatusByIdsDao(ids []string, status int) int {
 func insertItemDao(t TbItem) int {
 
 	count, err := common.Dml("insert into tb_item values(?,?,?,?,?,?,?,?,?,?,?)",
-		t.Id, t.Title, t.SellPoint, t.Price, t.Num, t.Barcode, t.Image, t.Cid, t.Status, t.Create, t.Update)
+		t.Id, t.Title, t.SellPoint, t.Price, t.Num, t.Barcode, t.Image, t.Cid, t.Status, t.Created, t.Updated)
 
 	if err != nil {
+		fmt.Println(err)
 		return -1
 	}
 
@@ -89,7 +90,7 @@ func insertItemDao(t TbItem) int {
 }
 
 //根据Id 删除
-func delById(id int) int {
+func delById(id int64) int {
 	count, err := common.Dml("delete from tb_item where id=?", id)
 	if err != nil {
 		fmt.Println(err)
@@ -110,9 +111,16 @@ func selByIdDao(id int) (t *TbItem) {
 		t := new(TbItem)
 		var s sql.NullString
 		_ = rows.Scan(&t.Id, &t.Title, &t.SellPoint, &t.Price, &t.Num,
-			&s, &t.Image, &t.Cid, &t.Status, &t.Create, &t.Update)
+			&s, &t.Image, &t.Cid, &t.Status, &t.Created, &t.Updated)
 		t.Barcode = s.String
 		return t
 	}
 	return nil
+}
+
+//修改商品表数据
+func updateItemByIdWithTx(t TbItem) int {
+	return common.PrepareWithTx("update tb_item set title =?,"+
+		"sell_point=?,price=?,num=?,image=?,cid=?,status=?,updated=? where id=?",
+		t.Title, t.SellPoint, t.Price, t.Num, t.Image, t.Cid, t.Status, t.Updated, t.Id)
 }

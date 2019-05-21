@@ -15,7 +15,85 @@
         allowFileManager: true,
         uploadJson: "/item/imageupload"
     });
+    //选择类目按钮
+    $("#item_update_selectcate").click(function () {
+        $('#item_update_dialog').dialog({
+            title: '选择类目',
+            width: 600,
+            height: 400,
+            closed: false,
+            cache: false,
+            href: '/page/item_cat_tree',
+            modal: true,
+            onLoad:function(){
+                $('#category_tree_tree').tree({
+                    url:'/item/cat/show',
+                    onClick: function(node){
+                        if(node.state=="open"){
+                            $("#item_update_selectcate_span").html(node.text);
+                            $("#item_update_selectcate_hidden").val(node.id);
+                            $('#item_update_dialog').dialog("destroy")
+                        }
+                    }
+                });
+            }
+        });
+    });
+    //图片上传
+    K('#item_update_imageupload').click(function () {
+        itemUpdateEdit.loadPlugin('multiimage', function () {
+            itemUpdateEdit.plugin.multiImageDialog({
+                clickFn: function (urlList) {
+                    $("#item_update_upload_span").html("");
+                    var urls = "";
+                    $.each(urlList, function (i, n) {
+                        $("#item_update_upload_span").append('<img src="' + n.url + '" width="50" height="50"/>&nbsp;')
+                        urls += n.url;
+                        if (i < urlList.length - 1) {
+                            urls += ",";
+                        }
+                    })
 
+                    $("#item_update_image_hidden").val(urls);
+                    itemUpdateEdit.hideDialog();
+                }
+            });
+        });
+    });
+    //修改按钮
+    $("#item_update_submit").click(function () {
+        $('#item_update_form').form('submit', {
+            url: '/item/update',
+            onSubmit: function () {
+                if (!$('#item_update_form').form("validate")) {
+                    $.messager.alert('系统消息', '商品类目和红色项为必添项', 'warning');
+                    return false;
+                }
+                item_update_editor.sync();
+            },
+            success: function (data) {
+                //easyui form,返回数据需要解析
+                var json = eval("("+data+")")
+                if (json.Status == 200) {
+                    $.messager.show({
+                        title: '系统消息',
+                        msg: '修改成功',
+                        showType: 'show',
+                        showType: 'slide'
+                    });
+                    $('#item_dialog').dialog("close");
+                    $("#item_table").datagrid("reload");
+                } else {
+                    $.messager.show({
+                        title: '系统消息',
+                        msg: '修改失败',
+                        showType: 'show',
+                        showType: 'slide'
+                    });
+                }
+            }
+        });
+    });
 </script>
 <form id="item_update_form" method="post">
     <input type="hidden" name="Id" id="item_update_id"/>
@@ -74,9 +152,10 @@
         </tr>
         <tr>
             <td></td>
-            <td><a id="item_update_submit" href="#" class="easyui-linkbutton">新增</a></td>
+            <td><a id="item_update_submit" href="#" class="easyui-linkbutton">修改</a></td>
         </tr>
     </table>
 </form>
+<div id="item_update_dialog"></div>
 </body>
 </html>

@@ -12,6 +12,6 @@ func Insert(t TbItemDesc) int {
 }
 
 //根据主键查询描述
-func SelByIdService(id int) *TbItemDesc {
+func SelByIdService(id int64) *TbItemDesc {
 	return selByIdDao(id)
 }

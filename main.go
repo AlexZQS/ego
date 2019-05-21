@@ -4,6 +4,7 @@ import (
 	"ego/src/common"
 	"ego/src/item"
 	"ego/src/item/cat"
+	"ego/src/item/param"
 	"ego/src/user"
 	"github.com/gorilla/mux"
 	"html/template"
@@ -34,6 +35,8 @@ func main() {
 	item.ItemHandler()
 	//商品类目
 	cat.ItemCatHandle()
+	//商品规格
+	param.ParamHandler()
 	_ = http.ListenAndServe(":80", common.Router)
 
 }

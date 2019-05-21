@@ -19,7 +19,7 @@ package item
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商品表';*/
 
 type TbItem struct {
-	Id        int
+	Id        int64
 	Title     string
 	SellPoint string
 	Price     int
@@ -28,8 +28,8 @@ type TbItem struct {
 	Image     string
 	Cid       int
 	Status    int8
-	Create    string
-	Update    string
+	Created   string
+	Updated   string
 }
 
 //给页面使用，实现商品类目

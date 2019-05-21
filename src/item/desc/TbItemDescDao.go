@@ -22,7 +22,7 @@ func insertDescDao(t TbItemDesc) int {
 }
 
 //根据主键查询描述
-func selByIdDao(id int) (t *TbItemDesc) {
+func selByIdDao(id int64) (t *TbItemDesc) {
 	rows, err := common.Dql("select * from tb_item_desc where item_id=?", id)
 	if err != nil {
 		fmt.Println(err)
@@ -30,8 +30,14 @@ func selByIdDao(id int) (t *TbItemDesc) {
 	}
 	var desc = new(TbItemDesc)
 	if rows.Next() {
-		_ = rows.Scan(desc.ItemId, desc.ItemDesc, desc.Created, desc.Update)
+		_ = rows.Scan(&desc.ItemId, &desc.ItemDesc, &desc.Created, &desc.Update)
 		return desc
 	}
 	return nil
+}
+
+//根据主键修改商品描述，带有事务
+func UpdateDescByIdWithTxDao(t TbItemDesc) int {
+	return common.PrepareWithTx("update tb_item_desc set item_desc=?, updated =? where item_id=?",
+		t.ItemDesc, t.Update, t.ItemId)
 }

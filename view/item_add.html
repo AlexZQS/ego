@@ -20,7 +20,19 @@
             closed: false,
             cache: false,
             href: '/page/item_cat_tree',
-            modal: true
+            modal: true,
+            onLoad:function(){
+                $('#category_tree_tree').tree({
+                    url:'/item/cat/show',
+                    onClick: function(node){
+                        if(node.state=="open"){
+                            $("#item_add_selectcate_span").html(node.text);
+                            $("#item_add_selectcate_hidden").val(node.id);
+                            $('#item_add_dialog').dialog("destroy")
+                        }
+                    }
+                });
+            }
         });
     });
     //多文件上传

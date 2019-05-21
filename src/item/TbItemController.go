@@ -15,6 +15,16 @@ func ItemHandler() {
 	common.Router.HandleFunc("/item/imageupload", imageUploaderController)
 	common.Router.HandleFunc("/item/add", insertController)
 	common.Router.HandleFunc("/item/showItemById", showItemDescCatController)
+	common.Router.HandleFunc("/item/update", showItemUpdateController)
+}
+
+//修改
+func showItemUpdateController(w http.ResponseWriter, request *http.Request) {
+	request.ParseForm()
+	result := update(request.Form)
+	bytes, _ := json.Marshal(result)
+	w.Header().Set(common.HEADER_CONTENT_TYPE, common.JSON_HEADER)
+	w.Write(bytes)
 }
 
 //显示修改页面信息
