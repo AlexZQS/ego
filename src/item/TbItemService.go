@@ -4,7 +4,6 @@ import (
 	"ego/src/common"
 	"ego/src/item/cat"
 	"ego/src/item/desc"
-	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"mime/multipart"
@@ -33,9 +32,7 @@ func showItemService(page, rows int) (e *common.DataGrid) {
 			itemChild.SellPoint = items[i].SellPoint
 			itemChild.Title = items[i].Title
 
-			fmt.Printf(" id = %d", items[i].Cid)
 			itemChild.CategoryName = cat.ShowCatByIdService(items[i].Cid).Name
-			fmt.Printf(" CategoryName = %s\n", itemChild.CategoryName)
 			itemChildren = append(itemChildren, itemChild)
 
 		}
@@ -91,7 +88,6 @@ func imageUploadService(f multipart.File, h *multipart.FileHeader) map[string]in
 		strconv.FormatInt(time.Now().UnixNano(), 12) +
 		strconv.Itoa(rand.Intn(1000)) +
 		h.Filename[strings.LastIndex(h.Filename, "."):]
-	fmt.Printf("FileName %s", fileName)
 	err = ioutil.WriteFile(fileName, bytes, 0777)
 	if err != nil {
 		m["error"] = 1

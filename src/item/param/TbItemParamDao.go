@@ -82,3 +82,14 @@ func insertParamDao(param TbItemParam) int {
 	}
 	return int(count)
 }
+
+//更新
+func updateParamDao(param TbItemParam) int {
+	count, err := common.Dml("update tb_item_param set item_cat_id =? ,param_data=? , updated=? where id =?", param.ItemCatId,
+		param.ParamData, param.Updated, param.Id)
+	if err != nil {
+		fmt.Println(err)
+		return -1
+	}
+	return int(count)
+}

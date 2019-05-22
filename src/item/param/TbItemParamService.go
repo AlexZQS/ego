@@ -71,3 +71,20 @@ func insertParamService(values url.Values) (e common.EgoResult) {
 	}
 	return
 }
+
+//更新规格参数
+func updateParamService(values url.Values) (e common.EgoResult) {
+	var param TbItemParam
+	id, _ := strconv.Atoi(values["id"][0])
+	param.Id = int64(id)
+	catId, _ := strconv.Atoi(values["itemCatId"][0])
+	param.ItemCatId = catId
+	param.ParamData = values["paramData"][0]
+	format := time.Now().Format("2006-01-02 15:04:05")
+	param.Updated = format
+	count := updateParamDao(param)
+	if count > 0 {
+		e.Status = 200
+	}
+	return
+}
